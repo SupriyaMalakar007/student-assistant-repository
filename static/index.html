@@ -1,511 +1,3356 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8">
+<html lang="en">
+<head>
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<title>Smart Student Assistant</title>
+
+<style>
+:root{
+  --bg:#f6f7fb;
+  --card:#fff;
+  --tx:#1b1f2a;
+  --mu:#6b7280;
+  --bd:#e5e7ee;
+  --ac:#5b5bd6;
+  --ac2:#e8e8fb;
+  --hi:#e5484d;
+  --md:#f5a524;
+  --lo:#30a46c;
+}
+
+@media(prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1117;
+    --card:#181b24;
+    --tx:#e8eaf0;
+    --mu:#9aa1b2;
+    --bd:#2a2f3c;
+    --ac:#8b8bf0;
+    --ac2:#23244a;
+  }
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--tx);
+  font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+
+.w{
+  max-width:880px;
+  margin:0 auto;
+  padding:16px;
+}
+
+h1{font-size:22px;margin:4px 0 2px}
+h3{margin:14px 0 6px;font-size:15px}
+.sub{color:var(--mu);margin:0 0 14px}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+  gap:10px;
+  margin-bottom:14px;
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--bd);
+  border-radius:12px;
+  padding:12px;
+}
+
+.stat b{
+  font-size:22px;
+  display:block;
+}
+
+.stat span{
+  color:var(--mu);
+  font-size:12px;
+}
+
+.tabs{
+  display:flex;
+  gap:6px;
+  margin:12px 0;
+  overflow-x:auto;
+}
+
+.tabs button{
+  flex:1;
+  min-width:90px;
+  padding:9px;
+  border:1px solid var(--bd);
+  background:var(--card);
+  color:var(--tx);
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:600;
+}
+
+.tabs button.on{
+  background:var(--ac);
+  color:#fff;
+  border-color:var(--ac);
+}
+
+input,select,textarea{
+  width:100%;
+  padding:10px;
+  border:1px solid var(--bd);
+  border-radius:10px;
+  background:var(--card);
+  color:var(--tx);
+  font:inherit;
+}
+
+textarea{
+  resize:vertical;
+}
+
+.row{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.row>*{
+  flex:1;
+}
+
+.btn{
+  padding:9px 14px;
+  border:0;
+  border-radius:10px;
+  background:var(--ac);
+  color:#fff;
+  font-weight:600;
+  cursor:pointer;
+  flex:none;
+}
+
+.btn.g{
+  background:var(--ac2);
+  color:var(--ac);
+}
+
+.btn.s{
+  padding:5px 9px;
+  font-size:13px;
+}
+
+.btn:disabled{
+  opacity:.65;
+  cursor:wait;
+}
+
+.hint{
+  color:var(--mu);
+  font-size:12px;
+  margin:6px 0 12px;
+}
+
+.next{
+  border-left:4px solid var(--ac);
+  background:var(--ac2);
+  margin-top:12px;
+}
+
+.t{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  padding:10px 4px;
+  border-bottom:1px solid var(--bd);
+}
+
+.t:last-child{
+  border:0;
+}
+
+.t input{
+  width:auto;
+  margin-top:4px;
+}
+
+.t .m{
+  flex:1;
+  min-width:0;
+}
+
+.t.d .ti{
+  text-decoration:line-through;
+  color:var(--mu);
+}
+
+.chip{
+  display:inline-block;
+  font-size:11px;
+  padding:1px 8px;
+  border-radius:99px;
+  border:1px solid var(--bd);
+  color:var(--mu);
+  margin-right:4px;
+}
+
+.p3{border-color:var(--hi);color:var(--hi)}
+.p2{border-color:var(--md);color:var(--md)}
+.p1{border-color:var(--lo);color:var(--lo)}
+
+.od{
+  color:var(--hi);
+}
+
+.timer{
+  text-align:center;
+  padding:24px;
+}
+
+.big{
+  font-size:64px;
+  font-weight:700;
+  font-variant-numeric:tabular-nums;
+}
+
+.bars{
+  display:flex;
+  gap:8px;
+  align-items:flex-end;
+  height:90px;
+}
+
+.bars div{
+  flex:1;
+  text-align:center;
+  font-size:11px;
+  color:var(--mu);
+}
+
+.bars i{
+  display:block;
+  background:var(--ac);
+  border-radius:4px 4px 0 0;
+  min-height:2px;
+  margin-bottom:4px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:8px;
+}
+
+.kw{
+  display:inline-block;
+  background:var(--ac2);
+  color:var(--ac);
+  padding:2px 10px;
+  border-radius:99px;
+  margin:2px;
+  font-size:13px;
+}
+
+.fc{
+  min-height:110px;
+  cursor:pointer;
+  font-size:14px;
+}
+
+.fc small{
+  color:var(--mu);
+}
+
+.hide{
+  display:none!important;
+}
+
+.cg{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:4px;
+  margin-top:10px;
+  text-align:center;
+}
+
+.cg>div{
+  padding:6px 0;
+  border-radius:8px;
+  font-size:13px;
+  min-height:44px;
+  cursor:pointer;
+}
+
+.cg .h{
+  cursor:default;
+  min-height:0;
+  color:var(--mu);
+  font-size:11px;
+}
+
+.cg .dy:hover{
+  background:var(--ac2);
+}
+
+.cg .td{
+  outline:2px solid var(--ac);
+}
+
+.cg i{
+  display:block;
+  font-style:normal;
+  font-size:10px;
+  color:var(--ac);
+}
+
+.ai{
+  white-space:pre-wrap;
+  font-size:14px;
+}
+
+.form-title{
+  font-size:17px;
+  font-weight:700;
+  margin-bottom:4px;
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:8px;
+  margin-top:8px;
+}
+
+@media(max-width:600px){
+  .form-grid{
+    grid-template-columns:1fr;
+  }
+
+  .big{
+    font-size:52px;
+  }
+
+  .tabs button{
+    min-width:80px;
+  }
+}
+</style>
+
 <script>
-/* Local backend shim: provides the same claude.use('sample'|'db'|'user') API the page expects, via the Flask server. */
+/* Flask backend compatibility layer */
 (function(){
- const H={'Content-Type':'application/json'};
- const j=async(u,o)=>{const r=await fetch(u,o);const b=await r.json().catch(()=>({}));if(!r.ok)throw{code:'unavailable',message:b.error||r.statusText};return b};
- let uid=localStorage.getItem('ssa_uid');if(!uid){uid='u'+Math.random().toString(36).slice(2,8);localStorage.setItem('ssa_uid',uid)}
- let nm=localStorage.getItem('ssa_name');
- const sample=async(input,o)=>{const p=typeof input=='string'?input:input.map(m=>m.role+': '+m.content).join('\n');
-  const r=await j('/api/ai',{method:'POST',headers:H,body:JSON.stringify({prompt:p})});o&&o.onText&&o.onText({text:r.text,delta:r.text});return{text:r.text,truncated:false}};
- sample.json=async(i,o)=>JSON.parse((await sample(i,o)).text.replace(/```json|```/g,'').trim());
- const w=async(m,c,id,d)=>{await j('/api/'+c+'/'+id,{method:m,headers:H,body:d?JSON.stringify(d):undefined});window.dispatchEvent(new Event('ssa-sync'))};
- const db={collection:c=>({
-  onSnapshot(next,err){const tick=async()=>{try{const rows=await j('/api/'+c);next({docs:rows.map(r=>({id:r.id,data:()=>{const d={...r};delete d.id;return d}}))})}catch(e){err&&err(e)}};
-   tick();const t=setInterval(tick,2500);window.addEventListener('ssa-sync',tick);return()=>clearInterval(t)},
-  doc:id=>({set:d=>w('PUT',c,id,d),update:d=>w('PATCH',c,id,d),delete:()=>w('DELETE',c,id)})})};
- const user={me:async()=>{if(!nm){nm=(prompt('Your name for the team board?')||'Student').replace(/\|/g,'').slice(0,24);localStorage.setItem('ssa_name',nm)}return{id:uid+'|'+nm}},
-  profiles:async ids=>Object.fromEntries(ids.map(i=>[i,{name:i.split('|')[1]||'Teammate'}]))};
- window.claude={use:async n=>({sample,db,user})[n]||null};
+
+  const H={'Content-Type':'application/json'};
+
+  const j=async(u,o)=>{
+    const r=await fetch(u,o);
+    const b=await r.json().catch(()=>({}));
+    if(!r.ok){
+      throw {
+        code:'unavailable',
+        message:b.error||r.statusText
+      };
+    }
+    return b;
+  };
+
+  let uid=localStorage.getItem('ssa_uid');
+
+  if(!uid){
+    uid='u'+Math.random().toString(36).slice(2,8);
+    localStorage.setItem('ssa_uid',uid);
+  }
+
+  let nm=localStorage.getItem('ssa_name');
+
+  const sample=async(input,o)=>{
+    const p=typeof input==='string'
+      ?input
+      :input.map(m=>m.role+': '+m.content).join('\n');
+
+    const r=await j('/api/ai',{
+      method:'POST',
+      headers:H,
+      body:JSON.stringify({prompt:p})
+    });
+
+    if(o&&o.onText){
+      o.onText({
+        text:r.text,
+        delta:r.text
+      });
+    }
+
+    return {
+      text:r.text,
+      truncated:false
+    };
+  };
+
+  sample.json=async(i,o)=>{
+    return JSON.parse(
+      (await sample(i,o))
+      .text
+      .replace(/```json|```/g,'')
+      .trim()
+    );
+  };
+
+  window.claude={
+    use:async n=>{
+      if(n==='sample')return sample;
+      return null;
+    }
+  };
+
 })();
 </script>
-<title>Smart Student Assistant</title>
-<style>
-:root{--bg:#f6f7fb;--card:#fff;--tx:#1b1f2a;--mu:#6b7280;--bd:#e5e7ee;--ac:#5b5bd6;--ac2:#e8e8fb;--hi:#e5484d;--md:#f5a524;--lo:#30a46c;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1117;--card:#181b24;--tx:#e8eaf0;--mu:#9aa1b2;--bd:#2a2f3c;--ac:#8b8bf0;--ac2:#23244a}}
-:root[data-theme="dark"]{--bg:#0f1117;--card:#181b24;--tx:#e8eaf0;--mu:#9aa1b2;--bd:#2a2f3c;--ac:#8b8bf0;--ac2:#23244a}
-*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-.w{max-width:880px;margin:0 auto;padding:16px}
-h1{font-size:22px;margin:4px 0 2px}.sub{color:var(--mu);margin:0 0 14px}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:14px}
-.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px}
-.stat b{font-size:22px;display:block}.stat span{color:var(--mu);font-size:12px}
-.tabs{display:flex;gap:6px;margin:12px 0}
-.tabs button{flex:1;padding:9px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;cursor:pointer;font-weight:600}
-.tabs button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
-input,select,textarea{width:100%;padding:10px;border:1px solid var(--bd);border-radius:10px;background:var(--card);color:var(--tx);font:inherit}
-.row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1}
-.btn:disabled{opacity:.65;cursor:wait}.btn{padding:9px 14px;border:0;border-radius:10px;background:var(--ac);color:#fff;font-weight:600;cursor:pointer;flex:none}
-.btn.g{background:var(--ac2);color:var(--ac)}.btn.s{padding:5px 9px;font-size:13px}
-.hint{color:var(--mu);font-size:12px;margin:6px 0 12px}
-.next{border-left:4px solid var(--ac);background:var(--ac2)}
-.t{display:flex;gap:10px;align-items:flex-start;padding:10px 4px;border-bottom:1px solid var(--bd)}
-.t:last-child{border:0}.t input{width:auto;margin-top:4px}
-.t .m{flex:1;min-width:0}.t.d .ti{text-decoration:line-through;color:var(--mu)}
-.chip{display:inline-block;font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--bd);color:var(--mu);margin-right:4px}
-.p3{border-color:var(--hi);color:var(--hi)}.p2{border-color:var(--md);color:var(--md)}.p1{border-color:var(--lo);color:var(--lo)}
-.od{color:var(--hi)}
-.timer{text-align:center;padding:24px}.big{font-size:64px;font-weight:700;font-variant-numeric:tabular-nums}
-.bars{display:flex;gap:8px;align-items:flex-end;height:90px}.bars div{flex:1;text-align:center;font-size:11px;color:var(--mu)}
-.bars i{display:block;background:var(--ac);border-radius:4px 4px 0 0;min-height:2px;margin-bottom:4px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
-.kw{display:inline-block;background:var(--ac2);color:var(--ac);padding:2px 10px;border-radius:99px;margin:2px;font-size:13px}
-.fc{min-height:110px;cursor:pointer;font-size:14px}.fc small{color:var(--mu)}
-.hide{display:none}.cg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:10px;text-align:center}.cg>div{padding:6px 0;border-radius:8px;font-size:13px;min-height:44px;cursor:pointer}.cg .h{cursor:default;min-height:0;color:var(--mu);font-size:11px}.cg .dy:hover{background:var(--ac2)}.cg .td{outline:2px solid var(--ac)}.cg i{display:block;font-style:normal;font-size:10px;color:var(--ac)}.ai{white-space:pre-wrap;font-size:14px}h3{margin:14px 0 6px;font-size:15px}
-</style></head><body><div class="w">
+</head>
+
+<body>
+
+<div class="w">
+
 <h1>🎓 Smart Student Assistant</h1>
-<p class="sub">Tasks that prioritise themselves, a focus timer, and a document analyser that finds your to-dos.</p>
+
+<p class="sub">
+Tasks that prioritise themselves, a focus timer, document analysis and team collaboration.
+</p>
+
 <div class="stats" id="stats"></div>
-<div class="tabs"><button data-t="tasks" class="on">Tasks</button><button data-t="team">Team</button><button data-t="cal">Calendar</button><button data-t="focus">Focus</button><button data-t="doc">Document AI</button></div>
+
+<div class="tabs">
+  <button data-t="tasks" class="on">Tasks</button>
+  <button data-t="team">Team</button>
+  <button data-t="cal">Calendar</button>
+  <button data-t="focus">Focus</button>
+  <button data-t="doc">Document AI</button>
+</div>
+
+
+<!-- ================= TASKS ================= -->
 
 <section id="tasks">
- <div class="card"><input id="qa" placeholder='Quick add: "DBMS assignment fri 5pm !high ~2h #DBMS"'>
- <div class="hint">Type naturally. Understands <b>today / tomorrow / mon–sun / in 3d</b>, times (5pm), <b>!high !med !low</b>, <b>~90m / ~2h</b> effort, <b>#subject</b>. Press Enter.</div></div>
- <div id="next"></div>
- <div class="row" style="margin:12px 0"><select id="flt"><option value="">All subjects</option></select><select id="vw"><option value="a">Active</option><option value="d">Completed</option></select></div>
- <div class="card" id="list"></div>
+
+  <!-- NEW MANUAL TASK FORM -->
+  <div class="card">
+
+    <div class="form-title">➕ Add New Task</div>
+
+    <div class="hint">
+      Enter task details manually. You no longer need to put subject,
+      time, effort and priority inside the task sentence.
+    </div>
+
+    <input
+      id="taskTitle"
+      placeholder="Task title, e.g. Complete DBMS Assignment"
+    >
+
+    <div class="form-grid">
+
+      <div>
+        <label class="hint">📚 Subject</label>
+        <input
+          id="taskSubject"
+          placeholder="e.g. DBMS"
+        >
+      </div>
+
+      <div>
+        <label class="hint">⭐ Priority</label>
+        <select id="taskPriority">
+          <option value="1">Low Priority</option>
+          <option value="2" selected>Medium Priority</option>
+          <option value="3">High Priority</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="hint">📅 Due Date</label>
+        <input
+          id="taskDate"
+          type="date"
+        >
+      </div>
+
+      <div>
+        <label class="hint">⏰ Due Time</label>
+        <input
+          id="taskTime"
+          type="time"
+        >
+      </div>
+
+      <div>
+        <label class="hint">⏱️ Estimated Effort</label>
+        <select id="taskEffort">
+          <option value="15">15 minutes</option>
+          <option value="30" selected>30 minutes</option>
+          <option value="45">45 minutes</option>
+          <option value="60">1 hour</option>
+          <option value="90">1.5 hours</option>
+          <option value="120">2 hours</option>
+          <option value="180">3 hours</option>
+          <option value="240">4 hours</option>
+        </select>
+      </div>
+
+      <div style="display:flex;align-items:end">
+        <button
+          class="btn"
+          id="addTaskBtn"
+          style="width:100%"
+        >
+          ➕ Add Task
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- QUICK NATURAL LANGUAGE -->
+  <div class="card" style="margin-top:10px">
+
+    <details>
+
+      <summary style="cursor:pointer;font-weight:600">
+        ✨ Quick Add with Natural Language
+      </summary>
+
+      <div class="hint">
+        Optional. Example:
+        <b>DBMS assignment fri 5pm !high ~2h #DBMS</b>
+      </div>
+
+      <input
+        id="qa"
+        placeholder='Example: "DBMS assignment fri 5pm !high ~2h #DBMS"'
+      >
+
+    </details>
+
+  </div>
+
+
+  <div id="next"></div>
+
+  <div class="row" style="margin:12px 0">
+
+    <select id="flt">
+      <option value="">All subjects</option>
+    </select>
+
+    <select id="vw">
+      <option value="a">Active</option>
+      <option value="d">Completed</option>
+    </select>
+
+  </div>
+
+  <div class="card" id="list"></div>
+
 </section>
 
-<section id="team" class="hide">
-  <div class="card">
-    <h3 style="margin:0 0 6px">👥 Team Workspace</h3>
-    <div id="tmsg" class="hint" style="margin:0 0 14px">Create a team or join an existing team using a code.</div>
 
-    <div id="teamHome" class="row" style="gap:10px">
-      <button class="btn" id="createTeamBtn">➕ Create Team</button>
-      <button class="btn g" id="joinTeamBtn">🔗 Join Team</button>
+<!-- ================= TEAM ================= -->
+
+<section id="team" class="hide">
+
+  <div class="card">
+
+    <h3 style="margin:0 0 6px">
+      👥 Team Workspace
+    </h3>
+
+    <div id="tmsg" class="hint">
+      Create a team or join an existing team using a code.
     </div>
+
+    <div id="teamHome" class="row">
+
+      <button class="btn" id="createTeamBtn">
+        ➕ Create Team
+      </button>
+
+      <button class="btn g" id="joinTeamBtn">
+        🔗 Join Team
+      </button>
+
+    </div>
+
 
     <div id="createTeamPanel" class="hide" style="margin-top:12px">
-      <input id="teamName" maxlength="60" placeholder="Enter team name, e.g. AI Warriors">
+
+      <input
+        id="teamName"
+        maxlength="60"
+        placeholder="Enter team name, e.g. AI Warriors"
+      >
+
       <div class="row" style="margin-top:8px">
-        <button class="btn" id="doCreateTeam">Create Team</button>
-        <button class="btn g" id="cancelCreateTeam">Cancel</button>
+
+        <button class="btn" id="doCreateTeam">
+          Create Team
+        </button>
+
+        <button class="btn g" id="cancelCreateTeam">
+          Cancel
+        </button>
+
       </div>
+
     </div>
+
 
     <div id="joinTeamPanel" class="hide" style="margin-top:12px">
-      <input id="teamCodeInput" maxlength="6" placeholder="Enter 6-character team code" style="text-transform:uppercase">
+
+      <input
+        id="teamCodeInput"
+        maxlength="6"
+        placeholder="Enter 6-character team code"
+        style="text-transform:uppercase"
+      >
+
       <div class="row" style="margin-top:8px">
-        <button class="btn" id="doJoinTeam">Join Team</button>
-        <button class="btn g" id="cancelJoinTeam">Cancel</button>
+
+        <button class="btn" id="doJoinTeam">
+          Join Team
+        </button>
+
+        <button class="btn g" id="cancelJoinTeam">
+          Cancel
+        </button>
+
       </div>
+
     </div>
 
+
     <div id="connectedTeam" class="hide" style="margin-top:12px">
-      <div class="card" style="margin:0;background:rgba(255,255,255,.025)">
-        <div class="hint">Connected to team</div>
-        <div id="connectedTeamName" style="font-size:20px;font-weight:700;margin-top:4px"></div>
-        <div class="row" style="margin-top:8px;align-items:center">
-          <div style="flex:1">
-            <div class="hint">Share this code with your teammates</div>
-            <div id="connectedTeamCode" style="font-size:28px;font-weight:800;letter-spacing:4px"></div>
-            <div style="margin-top:10px;font-weight:700;font-size:15px">👥 Members joined: <span id="teamMemberCount">1</span></div>
-          </div>
-          <button class="btn g" id="copyTeamCode">📋 Copy Code</button>
-          <button class="btn g" id="leaveTeam">Leave</button>
+
+      <div class="card" style="margin:0">
+
+        <div class="hint">
+          Connected to team
         </div>
+
+        <div
+          id="connectedTeamName"
+          style="font-size:20px;font-weight:700"
+        ></div>
+
+        <div class="row" style="margin-top:8px;align-items:center">
+
+          <div style="flex:1">
+
+            <div class="hint">
+              Share this code with your teammates
+            </div>
+
+            <div
+              id="connectedTeamCode"
+              style="font-size:28px;font-weight:800;letter-spacing:4px"
+            ></div>
+
+            <div style="margin-top:10px;font-weight:700">
+              👥 Members joined:
+              <span id="teamMemberCount">1</span>
+            </div>
+
+          </div>
+
+          <button class="btn g" id="copyTeamCode">
+            📋 Copy Code
+          </button>
+
+          <button class="btn g" id="leaveTeam">
+            Leave
+          </button>
+
+        </div>
+
       </div>
 
-      <input id="tq" placeholder='Add a shared task and press Enter, e.g. Prepare presentation slides'>
+      <input
+        id="tq"
+        style="margin-top:10px"
+        placeholder="Add a shared task and press Enter"
+      >
+
+    </div>
+
+  </div>
+
+  <div
+    class="card hide"
+    id="tl"
+    style="margin-top:12px"
+  ></div>
+
+</section>
+
+
+<!-- ================= CALENDAR ================= -->
+
+<section id="cal" class="hide">
+
+  <div class="card">
+
+    <div class="row" style="align-items:center">
+
+      <button class="btn g s" id="pm">‹</button>
+
+      <b
+        id="mt"
+        style="text-align:center"
+      ></b>
+
+      <button class="btn g s" id="nm">›</button>
+
+    </div>
+
+    <div class="cg" id="cg"></div>
+
+  </div>
+
+  <div
+    class="card"
+    id="cd"
+    style="margin-top:12px"
+  >
+    <div class="hint">
+      Tap a day to see its tasks.
     </div>
   </div>
 
-  <div class="card hide" id="tl" style="margin-top:12px"></div>
 </section>
-<section id="cal" class="hide"><div class="card"><div class="row" style="align-items:center"><button class="btn g s" id="pm">‹</button><b id="mt" style="text-align:center"></b><button class="btn g s" id="nm">›</button></div><div class="cg" id="cg"></div></div><div class="card" id="cd" style="margin-top:12px"><div class="hint">Tap a day to see its tasks.</div></div></section>
+
+
+<!-- ================= FOCUS ================= -->
+
 <section id="focus" class="hide">
- <div class="card timer">
-  <select id="ftask" style="max-width:360px;margin-bottom:10px"></select>
-  <div class="big" id="clock">25:00</div><div id="mode" class="sub">Focus session</div>
-  <div class="row" style="justify-content:center;max-width:380px;margin:8px auto 0">
-   <button class="btn" id="go">Start</button><button class="btn g" id="rs">Reset</button>
-   <select id="len" style="flex:none;width:auto"><option value="25">25 min</option><option value="45">45 min</option><option value="15">15 min</option><option value="1">1 min (test)</option></select></div>
- </div>
- <div class="card" style="margin-top:12px"><b>Focus minutes – last 7 days</b><div class="bars" id="bars" style="margin-top:12px"></div></div>
+
+  <div class="card timer">
+
+    <select
+      id="ftask"
+      style="max-width:360px;margin-bottom:10px"
+    ></select>
+
+    <div class="big" id="clock">
+      25:00
+    </div>
+
+    <div id="mode" class="sub">
+      Focus session
+    </div>
+
+    <div
+      class="row"
+      style="justify-content:center;max-width:380px;margin:8px auto 0"
+    >
+
+      <button class="btn" id="go">
+        Start
+      </button>
+
+      <button class="btn g" id="rs">
+        Reset
+      </button>
+
+      <select
+        id="len"
+        style="flex:none;width:auto"
+      >
+        <option value="25">25 min</option>
+        <option value="45">45 min</option>
+        <option value="15">15 min</option>
+        <option value="1">1 min (test)</option>
+      </select>
+
+    </div>
+
+  </div>
+
+  <div class="card" style="margin-top:12px">
+
+    <b>Focus minutes – last 7 days</b>
+
+    <div
+      class="bars"
+      id="bars"
+      style="margin-top:12px"
+    ></div>
+
+  </div>
+
 </section>
+
+
+<!-- ================= DOCUMENT AI ================= -->
 
 <section id="doc" class="hide">
- <div class="card"><textarea id="dt" rows="8" placeholder="Paste an assignment brief, syllabus, email or lecture notes…"></textarea>
- <div class="row" style="margin-top:8px"><button class="btn" id="an">Analyse</button><button class="btn g" id="smp">Load sample</button><label class="btn g" style="cursor:pointer">📄 Upload PDF<input type="file" id="pf" accept="application/pdf" hidden></label><button class="btn g" id="aisum">✨ AI summary</button></div></div>
- <div class="card hide" id="aib" style="margin-top:12px"><div class="ai" id="aio"></div><div class="row" style="margin-top:8px"><input id="aiq" placeholder="Ask a question about this document…"><button class="btn" id="aia">Ask</button></div></div>
- <div id="out"></div>
+
+  <div class="card">
+
+    <textarea
+      id="dt"
+      rows="8"
+      placeholder="Paste an assignment brief, syllabus, email or lecture notes…"
+    ></textarea>
+
+    <div class="row" style="margin-top:8px">
+
+      <button class="btn" id="an">
+        Analyse
+      </button>
+
+      <button class="btn g" id="smp">
+        Load sample
+      </button>
+
+      <label
+        class="btn g"
+        style="cursor:pointer"
+      >
+        📄 Upload PDF
+        <input
+          type="file"
+          id="pf"
+          accept="application/pdf"
+          hidden
+        >
+      </label>
+
+      <button
+        class="btn g"
+        id="aisum"
+      >
+        ✨ AI Summary
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <div
+    class="card hide"
+    id="aib"
+    style="margin-top:12px"
+  >
+
+    <div
+      class="ai"
+      id="aio"
+    ></div>
+
+    <div class="row" style="margin-top:8px">
+
+      <input
+        id="aiq"
+        placeholder="Ask a question about this document…"
+      >
+
+      <button class="btn" id="aia">
+        Ask
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <div id="out"></div>
+
 </section>
+
 </div>
+
+
 <script>
-const $=s=>document.querySelector(s);let S={tasks:[],log:{}};
-try{S=JSON.parse(localStorage.getItem('ssa'))||S}catch(e){}
-const save=()=>{try{localStorage.setItem('ssa',JSON.stringify(S))}catch(e){}};
-const dk=d=>new Date(d).toISOString().slice(0,10),today=()=>dk(Date.now()-new Date().getTimezoneOffset()*60000);
-const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const DAYS=['sun','mon','tue','wed','thu','fri','sat'];
-function parse(s){let pri=2,subj='',est=30,m,dd=null,hh=null,mm=0;
- if(m=s.match(/!(high|med|low|h|m|l)\b/i)){pri={h:3,m:2,l:1}[m[1][0].toLowerCase()];s=s.replace(m[0],'')}
- if(m=s.match(/#(\w+)/)){subj=m[1];s=s.replace(m[0],'')}
- if(m=s.match(/~(\d+(?:\.\d+)?)\s?(h|m)/i)){est=Math.round(m[1]*(m[2].toLowerCase()=='h'?60:1));s=s.replace(m[0],'')}
- if(m=s.match(/\b(\d{1,2})(?::(\d{2}))?\s?(am|pm)\b/i)){hh=m[1]%12+(m[3].toLowerCase()=='pm'?12:0);mm=+m[2]||0;s=s.replace(m[0],'')}
- const d=new Date();d.setHours(0,0,0,0);
- if(m=s.match(/\bin (\d+)\s?d(ays?)?\b/i)){d.setDate(d.getDate()+ +m[1]);dd=d;s=s.replace(m[0],'')}
- else if(m=s.match(/\b(today|tomorrow|tmr|mon|tue|wed|thu|fri|sat|sun)(day|sday|nesday|rsday|urday)?\b/i)){const w=m[1].toLowerCase();
-  if(w=='tomorrow'||w=='tmr')d.setDate(d.getDate()+1);else if(w!='today'){let k=(DAYS.indexOf(w)-d.getDay()+7)%7||7;d.setDate(d.getDate()+k)}
-  dd=d;s=s.replace(m[0],'')}
- if(hh!==null&&!dd)dd=d;
- if(dd)dd.setHours(hh===null?23:hh,hh===null?59:mm,0,0);
- s=s.replace(/\b(by|on|due|at)\s*$/i,'').replace(/\s+/g,' ').trim();
- return{id:Date.now()+Math.random(),title:s||'Untitled',subj,pri,est,spent:0,due:dd?+dd:null,done:false,doneAt:null}}
-function score(t){let urg=2;if(t.due){const h=(t.due-Date.now())/36e5;urg=h<0?10:h<24?8:h<72?6:h<168?4:2}
- let sc=urg*t.pri+(t.est<=30?1:0)+Math.min(2,t.est/240);return sc}
-function when(t){if(!t.due)return'';const h=(t.due-Date.now())/36e5,dt=new Date(t.due);
- const s=dt.toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'})+' '+dt.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
- return h<0?`<span class="od">overdue · ${s}</span>`:h<24?`<b>in ${Math.max(1,Math.round(h))}h</b> · ${s}`:s}
-function why(t){const h=t.due?(t.due-Date.now())/36e5:null;const r=[];
- if(h!==null)r.push(h<0?'it is overdue':h<24?'it is due within a day':h<72?'it is due in a few days':'');
- if(t.pri==3)r.push('high priority');if(t.est<=30)r.push('a quick win');
- return r.filter(Boolean).join(', ')||'best balance of priority and effort'}
-function stats(){const td=today(),fm=S.log[td]||0,dn=S.tasks.filter(t=>t.done&&t.doneAt&&dk(t.doneAt-new Date().getTimezoneOffset()*60000)==td).length,
- od=S.tasks.filter(t=>!t.done&&t.due&&t.due<Date.now()).length;let st=0;const d=new Date();
- if(!S.log[td])d.setDate(d.getDate()-1);while((S.log[dk(d-d.getTimezoneOffset()*60000)]||0)>0){st++;d.setDate(d.getDate()-1)}
- $('#stats').innerHTML=[['🔥 '+st,'day focus streak'],[fm+'m','focused today'],[dn,'done today'],[od,'overdue']].map(a=>`<div class="card stat"><b>${a[0]}</b><span>${a[1]}</span></div>`).join('')}
-function render(){if(typeof cal=='function')cal();const f=$('#flt'),cur=f.value,subs=[...new Set(S.tasks.map(t=>t.subj).filter(Boolean))];
- f.innerHTML='<option value="">All subjects</option>'+subs.map(s=>`<option ${s==cur?'selected':''}>${esc(s)}</option>`).join('');
- const act=S.tasks.filter(t=>!t.done).sort((a,b)=>score(b)-score(a)),nx=act[0];
- $('#next').innerHTML=nx?`<div class="card next"><b>⚡ Do next:</b> ${esc(nx.title)}<div class="hint" style="margin:2px 0 0">Because ${why(nx)}. Est. ${nx.est}m.</div></div>`:'';
- let L=($('#vw').value=='d'?S.tasks.filter(t=>t.done):act).filter(t=>!f.value||t.subj==f.value);
- $('#list').innerHTML=L.length?L.map(t=>`<div class="t ${t.done?'d':''}"><input type="checkbox" ${t.done?'checked':''} data-c="${t.id}"><div class="m"><div class="ti">${esc(t.title)}</div>
- <span class="chip p${t.pri}">${['','low','med','high'][t.pri]}</span>${t.subj?`<span class="chip">#${esc(t.subj)}</span>`:''}<span class="chip">~${t.est}m${t.spent?` · ${t.spent}m spent`:''}</span> <small>${when(t)}</small></div>
- <button class="btn g s ai-only" data-b="${t.id}">✨ Split</button><button class="btn g s" data-f="${t.id}">▶ Focus</button><button class="btn g s" data-x="${t.id}">✕</button></div>`).join(''):'<div class="hint">Nothing here yet. Add a task above or generate some from the Document AI tab.</div>';
- $('#ftask').innerHTML='<option value="">— no task —</option>'+act.map(t=>`<option value="${t.id}">${esc(t.title)}</option>`).join('');
- if(sel)$('#ftask').value=sel;stats();bars();save()}
-$('#qa').onkeydown=e=>{if(e.key=='Enter'&&e.target.value.trim()){S.tasks.push(parse(e.target.value));e.target.value='';render()}};
-$('#flt').onchange=$('#vw').onchange=render;
-$('#list').onclick=e=>{const g=a=>S.tasks.find(t=>t.id==e.target.dataset[a]);
- if(e.target.dataset.b)split(g('b'),e.target);
- if(e.target.dataset.c){const t=g('c');t.done=e.target.checked;t.doneAt=t.done?Date.now():null;render()}
- if(e.target.dataset.x){S.tasks=S.tasks.filter(t=>t!==g('x'));render()}
- if(e.target.dataset.f){sel=e.target.dataset.f;tab('focus');render()}};
-let sel='';
-document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>tab(b.dataset.t));
-function tab(n){document.querySelectorAll('section').forEach(s=>s.classList.toggle('hide',s.id!=n));
- document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t==n))}
-/* Focus timer */
-let tm={mode:'f',end:0,left:25*60,run:false};
-const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
-function paint(){$('#clock').textContent=fmt(tm.left);$('#mode').textContent=tm.mode=='f'?'Focus session':'Break time ☕';$('#go').textContent=tm.run?'Pause':'Start';document.title=tm.run?fmt(tm.left)+' · Focus':'Smart Student Assistant'}
-function reset(){tm={mode:'f',end:0,left:+$('#len').value*60,run:false};paint()}
-$('#len').onchange=reset;$('#rs').onclick=reset;
-$('#go').onclick=()=>{if(tm.run){tm.run=false;tm.left=Math.max(0,Math.round((tm.end-Date.now())/1000))}else{tm.end=Date.now()+tm.left*1000;tm.run=true}paint()};
-$('#ftask').onchange=e=>sel=e.target.value;
-setInterval(()=>{if(!tm.run)return;tm.left=Math.max(0,Math.round((tm.end-Date.now())/1000));
- if(tm.left<=0){tm.run=false;if(tm.mode=='f'){const m=+$('#len').value,t=S.tasks.find(t=>t.id==$('#ftask').value);
-  S.log[today()]=(S.log[today()]||0)+m;if(t)t.spent+=m;tm.mode='b';tm.left=(m>=25?5:Math.max(1,Math.round(m/5)))*60;render()}else{tm.mode='f';tm.left=+$('#len').value*60}}
- paint()},400);
-function bars(){const a=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);a.push([d.toLocaleDateString(undefined,{weekday:'short'}),S.log[dk(d-d.getTimezoneOffset()*60000)]||0])}
- const mx=Math.max(30,...a.map(x=>x[1]));$('#bars').innerHTML=a.map(x=>`<div><i style="height:${x[1]/mx*60}px"></i>${x[1]}m<br>${x[0]}</div>`).join('')}
-/* Document AI */
-const STOP=new Set('the a an and or but of to in on for with is are was were be been it this that these those as at by from not have has had will would can could should may might their there which also than then into about over more most such other our your its they them he she we you i do does did if so no any all each how what when where who whom why using use used'.split(' '));
-const SAMPLE=`Operating Systems Project Brief. Students must submit the design document by Friday. The final report is due on 28 Nov and should include a performance analysis of the scheduler. Each team needs to prepare a 10 minute demo for the viva. Process scheduling decides which process runs on the CPU, and round robin scheduling gives each process a fixed time quantum. Deadlocks occur when processes wait on each other forever, and the banker's algorithm avoids deadlocks by checking safe states. Virtual memory lets programs use more memory than physically available through paging. Please review the marking rubric before starting and complete the peer evaluation form by next Monday.`;
-$('#smp').onclick=()=>{$('#dt').value=SAMPLE;an()};
-const analyseBtn=$('#an');
-analyseBtn.type='button';
-analyseBtn.addEventListener('click',()=>an());
 
-function showAnalyseError(msg){
-  $('#out').innerHTML=`<div class="card" style="margin-top:12px;border-color:var(--hi)">
-    <b>⚠️ Analyse failed</b>
-    <div class="hint" style="margin:6px 0 0">${esc(msg)}</div>
-  </div>`;
-}
+/* ============================================================
+   STATE
+============================================================ */
 
+const $=s=>document.querySelector(s);
 
-function an(){
- const tx=$('#dt').value.trim();
- if(!tx){
-   showAnalyseError('Paste some document text first, then click Analyse.');
-   $('#dt').focus();
-   return;
- }
- analyseBtn.disabled=true;
- analyseBtn.textContent='Analysing…';
- try{
- const sents=(tx.match(/[^.!?\n]+[.!?]?/g)||[]).map(s=>s.trim()).filter(s=>s.split(' ').length>3);
- const words=tx.toLowerCase().match(/[a-z']+/g)||[],wc=words.length,syl=w=>Math.max(1,(w.replace(/e$/,'').match(/[aeiouy]+/g)||[]).length);
- const fl=Math.round(206.835-1.015*(wc/Math.max(1,sents.length))-84.6*(words.reduce((a,w)=>a+syl(w),0)/Math.max(1,wc)));
- const fr={};words.forEach(w=>{if(w.length>3&&!STOP.has(w))fr[w]=(fr[w]||0)+1});
- const kws=Object.entries(fr).sort((a,b)=>b[1]-a[1]).slice(0,10).map(a=>a[0]);
- const sc=sents.map((s,i)=>[i,(s.toLowerCase().match(/[a-z']+/g)||[]).reduce((a,w)=>a+(fr[w]||0),0)/Math.sqrt(s.length)]);
- const sum=sc.sort((a,b)=>b[1]-a[1]).slice(0,3).map(a=>a[0]).sort((a,b)=>a-b).map(i=>sents[i]);
- const acts=sents.filter(s=>/\b(submit|complete|prepare|deliver|due|deadline|must|should|needs? to|write|finish|review|include|register)\b/i.test(s));
- const cards=[];kws.forEach(k=>{if(cards.length>=6)return;const s=sents.find(s=>new RegExp('\\b'+k+'\\b','i').test(s)&&s.split(' ').length<35);
-  if(s&&!cards.some(c=>c.s==s))cards.push({s,q:s.replace(new RegExp('\\b'+k+'\\b','i'),'_____'),a:k})});
- const diff=fl>60?'Easy':fl>40?'Moderate':'Dense';
- $('#out').innerHTML=`<div class="stats" style="margin-top:12px">${[[wc,'words'],[sents.length,'sentences'],[Math.max(1,Math.round(wc/200))+' min','reading time'],[diff+' ('+fl+')','readability']].map(a=>`<div class="card stat"><b style="font-size:18px">${a[0]}</b><span>${a[1]}</span></div>`).join('')}</div>
- <div class="card"><h3 style="margin-top:0">Summary</h3>${sum.map(s=>'<p style="margin:4px 0">• '+esc(s)+'</p>').join('')}<h3>Key terms</h3>${kws.map(k=>`<span class="kw">${esc(k)}</span>`).join('')}</div>
- <div class="card" style="margin-top:12px"><h3 style="margin-top:0">Detected action items</h3>${acts.length?acts.map((s,i)=>`<div class="t"><div class="m">${esc(s)}</div><button class="btn s" data-a="${i}">+ Task</button></div>`).join(''):'<div class="hint">No action items found.</div>'}
- ${acts.length?'<button class="btn" id="all" style="margin-top:8px">Add all as tasks</button>':''}</div>
- <div class="card" style="margin-top:12px"><h3 style="margin-top:0">Auto study cards <small style="font-weight:400;color:var(--mu)">(tap to reveal)</small></h3><div class="grid">${cards.map(c=>`<div class="card fc" data-a="${esc(c.a)}"><small>Fill the blank</small><p>${esc(c.q)}</p></div>`).join('')||'<div class="hint">Need longer text.</div>'}</div></div>`;
- const add=s=>{const t=parse(s.length>90?s.slice(0,90)+'…':s);t.subj=t.subj||'Doc';S.tasks.push(t)};
- $('#out').querySelectorAll('[data-a]').forEach(b=>{if(b.tagName=='BUTTON')b.onclick=()=>{add(acts[b.dataset.a]);b.textContent='✓';b.disabled=true;render()};
-  else b.onclick=()=>{b.querySelector('p').innerHTML+=`<br><b>→ ${esc(b.dataset.a)}</b>`}});
- if($('#all'))$('#all').onclick=e=>{acts.forEach(add);e.target.textContent='Added ✓';render();tab('tasks')}
- $('#out').scrollIntoView({behavior:'smooth',block:'start'});
- }catch(err){
-   console.error('Document analysis error:',err);
-   showAnalyseError(err&&err.message ? err.message : 'Something went wrong while analysing the document.');
- }finally{
-   analyseBtn.disabled=false;
-   analyseBtn.textContent='Analyse';
- }
-}
-
-/* Calendar */
-let cm=new Date();cm.setDate(1);
-function cal(){const y=cm.getFullYear(),m=cm.getMonth();$('#mt').textContent=cm.toLocaleDateString(undefined,{month:'long',year:'numeric'});
- let h=DAYS.map(d=>`<div class="h">${d}</div>`).join('');for(let i=0;i<cm.getDay();i++)h+='<div></div>';
- const n=new Date(y,m+1,0).getDate(),tk=new Date().toDateString();
- for(let d=1;d<=n;d++){const dt=new Date(y,m,d),c=S.tasks.filter(t=>!t.done&&t.due&&new Date(t.due).toDateString()==dt.toDateString()).length;
-  h+=`<div class="dy ${dt.toDateString()==tk?'td':''}" data-d="${+dt}">${d}${c?`<i>${'●'.repeat(Math.min(c,3))}</i>`:''}</div>`}
- $('#cg').innerHTML=h}
-$('#pm').onclick=()=>{cm.setMonth(cm.getMonth()-1);cal()};$('#nm').onclick=()=>{cm.setMonth(cm.getMonth()+1);cal()};
-$('#cg').onclick=e=>{const d=e.target.closest('.dy');if(!d)return;const dt=new Date(+d.dataset.d).toDateString(),L=S.tasks.filter(t=>t.due&&new Date(t.due).toDateString()==dt);
- $('#cd').innerHTML=`<b>${dt}</b>`+(L.length?L.map(t=>`<div class="t ${t.done?'d':''}"><div class="m"><div class="ti">${esc(t.title)}</div><span class="chip p${t.pri}">${['','low','med','high'][t.pri]}</span><small>${when(t)}</small></div></div>`).join(''):'<div class="hint">Nothing due.</div>')};
-/* Claude-powered features (hidden if unavailable) */
-let AI=null;const ask=async(p,o)=>{const r=await AI(p,o);return r.text};
-(async()=>{try{AI=await claude.use('sample')}catch(e){}
- if(!AI){document.querySelectorAll('#aisum').forEach(b=>b.classList.add('hide'));document.head.insertAdjacentHTML('beforeend','<style>.ai-only{display:none}</style>')}})();
-async function split(t,btn){if(!AI)return;btn.textContent='…';
- try{const r=await AI.json(`Break this student task into 3-6 concrete subtasks. Return ONLY JSON: [{"title":string,"minutes":number}]. Task: "${t.title}" (subject: ${t.subj||'general'}, total est ${t.est} min).`);
-  (Array.isArray(r)?r:[]).slice(0,6).forEach(x=>{const n=parse(x.title+' ~'+(+x.minutes||20)+'m !'+['l','l','m','h'][t.pri]);n.subj=t.subj;n.due=t.due;S.tasks.push(n)});render()}
- catch(e){btn.textContent='✨ Split'}}
-const dtx=()=>$('#dt').value.trim().slice(0,12000);
-$('#aisum').onclick=async()=>{if(!dtx())return;$('#aib').classList.remove('hide');$('#aio').textContent='Thinking…';
- try{await AI(`Summarise this document for a student in under 120 words, then list key deadlines and 3 likely exam questions.\n\n${dtx()}`,{onText:r=>$('#aio').textContent=r.text})}catch(e){$('#aio').textContent='AI unavailable ('+(e.code||'error')+').'}};
-$('#aia').onclick=async()=>{const q=$('#aiq').value.trim();if(!q||!dtx())return;$('#aio').textContent+='\n\nQ: '+q+'\nA: …';
- try{const a=await ask(`Answer using only this document. If not covered, say so. Be concise.\n\nDOCUMENT:\n${dtx()}\n\nQUESTION: ${q}`,{cache:false});
-  $('#aio').textContent=$('#aio').textContent.replace(/…$/,a);$('#aiq').value=''}catch(e){$('#aio').textContent=$('#aio').textContent.replace(/…$/,'(failed)')}};
-
-/* PDF upload (pdf.js loaded on demand) */
-const lj=u=>new Promise((r,j)=>{const x=document.createElement('script');x.src=u;x.onload=r;x.onerror=j;document.head.appendChild(x)});
-$('#pf').onchange=async e=>{const f=e.target.files[0];if(!f)return;$('#dt').value='Reading PDF…';
- try{const B='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
-  if(!window.pdfjsLib){await lj(B+'pdf.min.js');await lj(B+'pdf.worker.min.js');pdfjsLib.GlobalWorkerOptions.workerSrc=B+'pdf.worker.min.js'}
-  const pdf=await pdfjsLib.getDocument({data:await f.arrayBuffer()}).promise;let t='';
-  for(let i=1;i<=Math.min(pdf.numPages,40);i++){const c=await(await pdf.getPage(i)).getTextContent();t+=c.items.map(x=>x.str).join(' ')+'\n'}
-  if(t.trim().length<20)throw 0;$('#dt').value=t.trim();an()}
- catch(err){$('#dt').value='';alert('Could not read this PDF (it may be scanned images). Try pasting the text instead.')}e.target.value=''};
-/* Shared team workspace */
-let teamState = null;
-try { teamState = JSON.parse(localStorage.getItem('ssa_team') || 'null'); } catch(e) { teamState = null; }
-let teamMemberId = localStorage.getItem('ssa_team_member_id');
-let teamMemberPoll = null;
-if (!teamMemberId) {
-  teamMemberId = 'm_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
-  localStorage.setItem('ssa_team_member_id', teamMemberId);
-}
-
-const teamApi = async (url, options={}) => {
-  const res = await fetch(url, {
-    ...options,
-    headers: {'Content-Type':'application/json', ...(options.headers||{})}
-  });
-  let data = {};
-  try { data = await res.json(); } catch(e) {}
-  if (!res.ok) throw new Error(data.error || ('Request failed (' + res.status + ')'));
-  return data;
+let S={
+  tasks:[],
+  log:{}
 };
 
-const saveTeamState = () => {
-  try {
-    if (teamState) localStorage.setItem('ssa_team', JSON.stringify(teamState));
-    else localStorage.removeItem('ssa_team');
-  } catch(e) {}
+try{
+  S=JSON.parse(localStorage.getItem('ssa'))||S;
+}catch(e){}
+
+const save=()=>{
+  try{
+    localStorage.setItem('ssa',JSON.stringify(S));
+  }catch(e){}
 };
 
-const showTeamPanel = name => {
-  ['createTeamPanel','joinTeamPanel'].forEach(id => $('#'+id).classList.add('hide'));
-  if (name) $('#'+name).classList.remove('hide');
-};
+const dk=d=>
+  new Date(d).toISOString().slice(0,10);
 
-const setTeamMessage = msg => { $('#tmsg').textContent = msg; };
+const today=()=>
+  dk(Date.now()-new Date().getTimezoneOffset()*60000);
 
-const teamEsc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const esc=s=>
+  String(s??'').replace(
+    /[&<>"]/g,
+    c=>({
+      '&':'&amp;',
+      '<':'&lt;',
+      '>':'&gt;',
+      '"':'&quot;'
+    }[c])
+  );
 
-async function loadTeamTasks() {
-  if (!teamState) return;
-  try {
-    const data = await teamApi('/api/team/' + encodeURIComponent(teamState.code) + '/tasks');
-    const tasks = data.tasks || [];
-    $('#teamMemberCount').textContent = (data.member_count ?? 1);
-    $('#tl').classList.remove('hide');
-    $('#tl').innerHTML = tasks.length ? tasks.map(t => `
-      <div class="t ${t.done ? 'd' : ''}" style="display:flex;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.07)">
-        <input type="checkbox" ${t.done ? 'checked' : ''} data-team-check="${teamEsc(t.id)}">
-        <div class="m" style="flex:1">
-          <div class="ti">${teamEsc(t.title || 'Untitled task')}</div>
-          <span class="chip">👤 ${teamEsc(t.by || 'Team member')}</span>
-        </div>
-        <button class="btn g s" data-team-delete="${teamEsc(t.id)}">✕</button>
-      </div>`).join('') : '<div class="hint">No shared tasks yet. Add the first one above.</div>';
-  } catch(e) {
-    setTeamMessage('Could not load team tasks: ' + e.message);
+const DAYS=[
+  'sun','mon','tue','wed','thu','fri','sat'
+];
+
+
+/* ============================================================
+   NATURAL LANGUAGE TASK PARSER
+   Used by AI/document generated tasks and optional Quick Add.
+============================================================ */
+
+function parse(s){
+
+  let pri=2;
+  let subj='';
+  let est=30;
+  let m;
+  let dd=null;
+  let hh=null;
+  let mm=0;
+
+  if(m=s.match(/!(high|med|low|h|m|l)\b/i)){
+    pri={
+      h:3,
+      m:2,
+      l:1
+    }[m[1][0].toLowerCase()];
+
+    s=s.replace(m[0],'');
   }
+
+  if(m=s.match(/#(\w+)/)){
+    subj=m[1];
+    s=s.replace(m[0],'');
+  }
+
+  if(m=s.match(/~(\d+(?:\.\d+)?)\s?(h|m)/i)){
+    est=Math.round(
+      m[1]*
+      (m[2].toLowerCase()==='h'?60:1)
+    );
+
+    s=s.replace(m[0],'');
+  }
+
+  if(m=s.match(
+    /\b(\d{1,2})(?::(\d{2}))?\s?(am|pm)\b/i
+  )){
+    hh=m[1]%12+
+      (m[3].toLowerCase()==='pm'?12:0);
+
+    mm=+m[2]||0;
+
+    s=s.replace(m[0],'');
+  }
+
+  const d=new Date();
+  d.setHours(0,0,0,0);
+
+  if(m=s.match(/\bin (\d+)\s?d(ays?)?\b/i)){
+
+    d.setDate(
+      d.getDate()+ +m[1]
+    );
+
+    dd=d;
+
+    s=s.replace(m[0],'');
+  }
+
+  else if(
+    m=s.match(
+      /\b(today|tomorrow|tmr|mon|tue|wed|thu|fri|sat|sun)(day|sday|nesday|rsday|urday)?\b/i
+    )
+  ){
+
+    const w=m[1].toLowerCase();
+
+    if(w==='tomorrow'||w==='tmr'){
+      d.setDate(d.getDate()+1);
+    }
+
+    else if(w!=='today'){
+
+      const k=
+        (DAYS.indexOf(w)-d.getDay()+7)%7||7;
+
+      d.setDate(d.getDate()+k);
+    }
+
+    dd=d;
+
+    s=s.replace(m[0],'');
+  }
+
+  if(hh!==null&&!dd){
+    dd=d;
+  }
+
+  if(dd){
+
+    dd.setHours(
+      hh===null?23:hh,
+      hh===null?59:mm,
+      0,
+      0
+    );
+
+  }
+
+  s=s
+    .replace(/\b(by|on|due|at)\s*$/i,'')
+    .replace(/\s+/g,' ')
+    .trim();
+
+  return{
+    id:Date.now()+Math.random(),
+    title:s||'Untitled',
+    subj,
+    pri,
+    est,
+    spent:0,
+    due:dd?+dd:null,
+    done:false,
+    doneAt:null
+  };
 }
 
-function renderTeamConnection() {
-  const connected = !!teamState;
-  $('#teamHome').classList.toggle('hide', connected);
-  $('#connectedTeam').classList.toggle('hide', !connected);
-  $('#tl').classList.toggle('hide', !connected);
-  if (!connected) {
-    if (teamMemberPoll) {
-      clearInterval(teamMemberPoll);
-      teamMemberPoll = null;
-    }
-    showTeamPanel(null);
-    setTeamMessage('Create a team or join an existing team using a code.');
+
+/* ============================================================
+   TASK PRIORITY
+============================================================ */
+
+function score(t){
+
+  let urg=2;
+
+  if(t.due){
+
+    const h=
+      (t.due-Date.now())/36e5;
+
+    urg=
+      h<0?10:
+      h<24?8:
+      h<72?6:
+      h<168?4:2;
+  }
+
+  return
+    urg*t.pri+
+    (t.est<=30?1:0)+
+    Math.min(2,t.est/240);
+}
+
+function when(t){
+
+  if(!t.due)return '';
+
+  const h=
+    (t.due-Date.now())/36e5;
+
+  const dt=new Date(t.due);
+
+  const s=
+    dt.toLocaleDateString(
+      undefined,
+      {
+        weekday:'short',
+        day:'numeric',
+        month:'short'
+      }
+    )+
+    ' '+
+    dt.toLocaleTimeString(
+      [],
+      {
+        hour:'numeric',
+        minute:'2-digit'
+      }
+    );
+
+  if(h<0)
+    return `<span class="od">overdue · ${s}</span>`;
+
+  if(h<24)
+    return `<b>in ${Math.max(1,Math.round(h))}h</b> · ${s}`;
+
+  return s;
+}
+
+function why(t){
+
+  const h=t.due?
+    (t.due-Date.now())/36e5:
+    null;
+
+  const r=[];
+
+  if(h!==null){
+    r.push(
+      h<0?'it is overdue':
+      h<24?'it is due within a day':
+      h<72?'it is due in a few days':''
+    );
+  }
+
+  if(t.pri===3)
+    r.push('high priority');
+
+  if(t.est<=30)
+    r.push('a quick win');
+
+  return r.filter(Boolean).join(', ')
+    ||'best balance of priority and effort';
+}
+
+
+/* ============================================================
+   STATISTICS
+============================================================ */
+
+function stats(){
+
+  const td=today();
+
+  const fm=S.log[td]||0;
+
+  const dn=S.tasks.filter(
+    t=>
+      t.done&&
+      t.doneAt&&
+      dk(
+        t.doneAt-
+        new Date().getTimezoneOffset()*60000
+      )===td
+  ).length;
+
+  const od=S.tasks.filter(
+    t=>
+      !t.done&&
+      t.due&&
+      t.due<Date.now()
+  ).length;
+
+  let st=0;
+
+  const d=new Date();
+
+  if(!S.log[td])
+    d.setDate(d.getDate()-1);
+
+  while(
+    (S.log[
+      dk(
+        d-
+        d.getTimezoneOffset()*60000
+      )
+    ]||0)>0
+  ){
+
+    st++;
+
+    d.setDate(
+      d.getDate()-1
+    );
+  }
+
+  $('#stats').innerHTML=[
+    ['🔥 '+st,'day focus streak'],
+    [fm+'m','focused today'],
+    [dn,'done today'],
+    [od,'overdue']
+  ].map(
+    a=>
+      `<div class="card stat">
+        <b>${a[0]}</b>
+        <span>${a[1]}</span>
+      </div>`
+  ).join('');
+}
+
+
+/* ============================================================
+   RENDER TASKS
+============================================================ */
+
+function render(){
+
+  if(typeof cal==='function')
+    cal();
+
+  const f=$('#flt');
+
+  const cur=f.value;
+
+  const subs=[
+    ...new Set(
+      S.tasks
+        .map(t=>t.subj)
+        .filter(Boolean)
+    )
+  ];
+
+  f.innerHTML=
+    '<option value="">All subjects</option>'+
+    subs.map(
+      s=>
+        `<option value="${esc(s)}"
+          ${s===cur?'selected':''}>
+          ${esc(s)}
+        </option>`
+    ).join('');
+
+  const act=
+    S.tasks
+      .filter(t=>!t.done)
+      .sort(
+        (a,b)=>score(b)-score(a)
+      );
+
+  const nx=act[0];
+
+  $('#next').innerHTML=
+    nx?
+    `<div class="card next">
+      <b>⚡ Do next:</b>
+      ${esc(nx.title)}
+      <div class="hint" style="margin:2px 0 0">
+        Because ${why(nx)}.
+        Est. ${nx.est}m.
+      </div>
+    </div>`:'';
+
+  let L=
+    $('#vw').value==='d'
+      ?S.tasks.filter(t=>t.done)
+      :act;
+
+  L=L.filter(
+    t=>!f.value||t.subj===f.value
+  );
+
+  $('#list').innerHTML=
+    L.length?
+
+    L.map(
+      t=>
+      `<div class="t ${t.done?'d':''}">
+
+        <input
+          type="checkbox"
+          ${t.done?'checked':''}
+          data-c="${t.id}"
+        >
+
+        <div class="m">
+
+          <div class="ti">
+            ${esc(t.title)}
+          </div>
+
+          <span class="chip p${t.pri}">
+            ${['','low','med','high'][t.pri]}
+          </span>
+
+          ${
+            t.subj?
+            `<span class="chip">
+              #${esc(t.subj)}
+            </span>`:''
+          }
+
+          <span class="chip">
+            ~${t.est}m
+            ${t.spent?
+              ` · ${t.spent}m spent`:''
+            }
+          </span>
+
+          <small>
+            ${when(t)}
+          </small>
+
+        </div>
+
+        <button
+          class="btn g s ai-only"
+          data-b="${t.id}"
+        >
+          ✨ Split
+        </button>
+
+        <button
+          class="btn g s"
+          data-f="${t.id}"
+        >
+          ▶ Focus
+        </button>
+
+        <button
+          class="btn g s"
+          data-x="${t.id}"
+        >
+          ✕
+        </button>
+
+      </div>`
+    ).join('')
+
+    :
+
+    `<div class="hint">
+      Nothing here yet.
+      Add a task above or generate tasks
+      from Document AI.
+    </div>`;
+
+  $('#ftask').innerHTML=
+    '<option value="">— no task —</option>'+
+    act.map(
+      t=>
+        `<option value="${t.id}">
+          ${esc(t.title)}
+        </option>`
+    ).join('');
+
+  if(sel)
+    $('#ftask').value=sel;
+
+  stats();
+  bars();
+  save();
+}
+
+
+/* ============================================================
+   NEW MANUAL TASK CREATION
+============================================================ */
+
+$('#addTaskBtn').onclick=()=>{
+
+  const title=
+    $('#taskTitle').value.trim();
+
+  const subject=
+    $('#taskSubject').value.trim();
+
+  const priority=
+    +$('#taskPriority').value;
+
+  const effort=
+    +$('#taskEffort').value;
+
+  const date=
+    $('#taskDate').value;
+
+  const time=
+    $('#taskTime').value;
+
+  if(!title){
+
+    alert('Please enter a task title.');
+
+    $('#taskTitle').focus();
+
     return;
   }
-  $('#connectedTeamName').textContent = teamState.name;
-  $('#connectedTeamCode').textContent = teamState.code;
-  $('#teamMemberCount').textContent = teamState.member_count ?? 1;
-  setTeamMessage('You are connected. Anyone who joins with this code sees the same team tasks.');
-  loadTeamTasks();
 
-  // Refresh the shared task list and member count automatically.
-  if (teamMemberPoll) clearInterval(teamMemberPoll);
-  teamMemberPoll = setInterval(() => {
-    if (teamState && !document.hidden) loadTeamTasks();
-  }, 3000);
+  let due=null;
+
+  if(date){
+
+    const dueDate=
+      new Date(
+        date+'T'+
+        (time||'23:59')
+      );
+
+    if(Number.isNaN(dueDate.getTime())){
+
+      alert(
+        'Please enter a valid due date and time.'
+      );
+
+      return;
+    }
+
+    due=dueDate.getTime();
+  }
+
+  const task={
+    id:Date.now()+Math.random(),
+    title:title,
+    subj:subject,
+    pri:priority,
+    est:effort,
+    spent:0,
+    due:due,
+    done:false,
+    doneAt:null
+  };
+
+  S.tasks.push(task);
+
+  $('#taskTitle').value='';
+  $('#taskSubject').value='';
+  $('#taskPriority').value='2';
+  $('#taskEffort').value='30';
+  $('#taskDate').value='';
+  $('#taskTime').value='';
+
+  render();
+
+  $('#taskTitle').focus();
+};
+
+
+/* Press Enter inside title */
+
+$('#taskTitle').addEventListener(
+  'keydown',
+  e=>{
+    if(e.key==='Enter'){
+      e.preventDefault();
+      $('#addTaskBtn').click();
+    }
+  }
+);
+
+
+/* Optional natural language quick add */
+
+$('#qa').onkeydown=e=>{
+
+  if(
+    e.key==='Enter'&&
+    e.target.value.trim()
+  ){
+
+    S.tasks.push(
+      parse(e.target.value)
+    );
+
+    e.target.value='';
+
+    render();
+  }
+
+};
+
+$('#flt').onchange=render;
+$('#vw').onchange=render;
+
+
+/* ============================================================
+   TASK BUTTON ACTIONS
+============================================================ */
+
+$('#list').onclick=e=>{
+
+  const find=id=>
+    S.tasks.find(t=>t.id==e.target.dataset[id]);
+
+  if(e.target.dataset.b)
+    split(
+      find('b'),
+      e.target
+    );
+
+  if(e.target.dataset.c){
+
+    const t=find('c');
+
+    t.done=e.target.checked;
+
+    t.doneAt=
+      t.done?
+      Date.now():
+      null;
+
+    render();
+  }
+
+  if(e.target.dataset.x){
+
+    const t=find('x');
+
+    S.tasks=
+      S.tasks.filter(
+        x=>x!==t
+      );
+
+    render();
+  }
+
+  if(e.target.dataset.f){
+
+    sel=e.target.dataset.f;
+
+    tab('focus');
+
+    render();
+  }
+};
+
+
+/* ============================================================
+   TABS
+============================================================ */
+
+let sel='';
+
+document
+  .querySelectorAll('.tabs button')
+  .forEach(
+    b=>
+      b.onclick=()=>
+        tab(b.dataset.t)
+  );
+
+function tab(n){
+
+  document
+    .querySelectorAll('section')
+    .forEach(
+      s=>
+        s.classList.toggle(
+          'hide',
+          s.id!==n
+        )
+    );
+
+  document
+    .querySelectorAll('.tabs button')
+    .forEach(
+      b=>
+        b.classList.toggle(
+          'on',
+          b.dataset.t===n
+        )
+    );
 }
 
-document.addEventListener('visibilitychange', () => {
-  if (!document.hidden && teamState) loadTeamTasks();
-});
 
-$('#createTeamBtn').onclick = () => showTeamPanel('createTeamPanel');
-$('#joinTeamBtn').onclick = () => showTeamPanel('joinTeamPanel');
-$('#cancelCreateTeam').onclick = () => showTeamPanel(null);
-$('#cancelJoinTeam').onclick = () => showTeamPanel(null);
+/* ============================================================
+   FOCUS TIMER
+============================================================ */
 
-$('#doCreateTeam').onclick = async () => {
-  const name = $('#teamName').value.trim();
-  if (!name) return alert('Please enter a team name.');
-  const btn = $('#doCreateTeam');
-  btn.disabled = true;
-  try {
-    const data = await teamApi('/api/team/create', {
-      method:'POST', body:JSON.stringify({name, member_id:teamMemberId})
-    });
-    teamState = data.team;
-    teamState.member_count = data.member_count ?? teamState.member_count ?? 1;
-    saveTeamState();
-    $('#teamName').value = '';
-    renderTeamConnection();
-    alert('Team created! Share this code with your teammates: ' + teamState.code);
-  } catch(e) {
-    alert('Could not create team: ' + e.message);
-  } finally { btn.disabled = false; }
+let tm={
+  mode:'f',
+  end:0,
+  left:25*60,
+  run:false
 };
 
-$('#doJoinTeam').onclick = async () => {
-  const code = $('#teamCodeInput').value.trim().toUpperCase();
-  if (!/^[A-Z0-9]{6}$/.test(code)) return alert('Enter the 6-character team code.');
-  const btn = $('#doJoinTeam');
-  btn.disabled = true;
-  try {
-    const data = await teamApi('/api/team/join', {
-      method:'POST', body:JSON.stringify({code, member_id:teamMemberId})
-    });
-    teamState = data.team;
-    teamState.member_count = data.member_count ?? teamState.member_count ?? 1;
-    saveTeamState();
-    $('#teamCodeInput').value = '';
-    renderTeamConnection();
-  } catch(e) {
-    alert('Could not join team: ' + e.message);
-  } finally { btn.disabled = false; }
-};
+const fmt=s=>
+  String(Math.floor(s/60)).padStart(2,'0')+
+  ':'+
+  String(s%60).padStart(2,'0');
 
-$('#copyTeamCode').onclick = async () => {
-  if (!teamState) return;
-  try {
-    await navigator.clipboard.writeText(teamState.code);
-    setTeamMessage('Team code copied: ' + teamState.code);
-  } catch(e) {
-    alert('Your team code is: ' + teamState.code);
+function paint(){
+
+  $('#clock').textContent=
+    fmt(tm.left);
+
+  $('#mode').textContent=
+    tm.mode==='f'
+      ?'Focus session'
+      :'Break time ☕';
+
+  $('#go').textContent=
+    tm.run?'Pause':'Start';
+
+  document.title=
+    tm.run
+      ?fmt(tm.left)+' · Focus'
+      :'Smart Student Assistant';
+}
+
+function reset(){
+
+  tm={
+    mode:'f',
+    end:0,
+    left:+$('#len').value*60,
+    run:false
+  };
+
+  paint();
+}
+
+$('#len').onchange=reset;
+$('#rs').onclick=reset;
+
+$('#go').onclick=()=>{
+
+  if(tm.run){
+
+    tm.run=false;
+
+    tm.left=
+      Math.max(
+        0,
+        Math.round(
+          (tm.end-Date.now())/1000
+        )
+      );
+
+  }else{
+
+    tm.end=
+      Date.now()+
+      tm.left*1000;
+
+    tm.run=true;
   }
+
+  paint();
 };
 
-$('#leaveTeam').onclick = async () => {
-  if (!teamState || !confirm('Leave this team? Your member count will decrease by 1.')) return;
+$('#ftask').onchange=
+  e=>sel=e.target.value;
 
-  const code = teamState.code;
-  const btn = $('#leaveTeam');
-  btn.disabled = true;
+setInterval(()=>{
 
-  try {
-    const data = await teamApi('/api/team/' + encodeURIComponent(code) + '/leave', {
-      method:'POST',
-      body:JSON.stringify({member_id:teamMemberId})
-    });
+  if(!tm.run)return;
 
-    // Remove this browser from the local team connection.
-    teamState = null;
-    saveTeamState();
+  tm.left=
+    Math.max(
+      0,
+      Math.round(
+        (tm.end-Date.now())/1000
+      )
+    );
 
-    renderTeamConnection();
+  if(tm.left<=0){
 
-    setTeamMessage('You left the team. Members remaining: ' + (data.member_count ?? 0));
-  } catch(e) {
-    alert('Could not leave team: ' + e.message);
-  } finally {
-    btn.disabled = false;
-  }
-};
+    tm.run=false;
 
-$('#tq').onkeydown = async e => {
-  if (e.key !== 'Enter') return;
-  const title = e.target.value.trim();
-  if (!title || !teamState) return;
-  try {
-    await teamApi('/api/team/' + encodeURIComponent(teamState.code) + '/tasks', {
-      method:'POST',
-      body:JSON.stringify({title, by:'Team member', done:false})
-    });
-    e.target.value = '';
-    await loadTeamTasks();
-  } catch(err) {
-    setTeamMessage('Could not add task: ' + err.message);
-  }
-};
+    if(tm.mode==='f'){
 
-$('#tl').onclick = async e => {
-  if (!teamState) return;
-  const checkId = e.target.dataset.teamCheck;
-  const deleteId = e.target.dataset.teamDelete;
-  try {
-    if (checkId) {
-      await teamApi('/api/team/' + encodeURIComponent(teamState.code) + '/tasks/' + encodeURIComponent(checkId), {
-        method:'PATCH', body:JSON.stringify({done:e.target.checked})
-      });
-      await loadTeamTasks();
+      const m=
+        +$('#len').value;
+
+      const t=
+        S.tasks.find(
+          t=>t.id===$('#ftask').value
+        );
+
+      S.log[today()]=
+        (S.log[today()]||0)+m;
+
+      if(t)
+        t.spent+=m;
+
+      tm.mode='b';
+
+      tm.left=
+        (m>=25?
+          5:
+          Math.max(
+            1,
+            Math.round(m/5)
+          )
+        )*60;
+
+      render();
+
+    }else{
+
+      tm.mode='f';
+
+      tm.left=
+        +$('#len').value*60;
     }
-    if (deleteId) {
-      await teamApi('/api/team/' + encodeURIComponent(teamState.code) + '/tasks/' + encodeURIComponent(deleteId), {method:'DELETE'});
-      await loadTeamTasks();
+  }
+
+  paint();
+
+},400);
+
+
+/* ============================================================
+   FOCUS CHART
+============================================================ */
+
+function bars(){
+
+  const a=[];
+
+  for(let i=6;i>=0;i--){
+
+    const d=new Date();
+
+    d.setDate(
+      d.getDate()-i
+    );
+
+    a.push([
+      d.toLocaleDateString(
+        undefined,
+        {weekday:'short'}
+      ),
+      S.log[
+        dk(
+          d-
+          d.getTimezoneOffset()*60000
+        )
+      ]||0
+    ]);
+  }
+
+  const mx=
+    Math.max(
+      30,
+      ...a.map(x=>x[1])
+    );
+
+  $('#bars').innerHTML=
+    a.map(
+      x=>
+      `<div>
+        <i style="height:${x[1]/mx*60}px"></i>
+        ${x[1]}m<br>
+        ${x[0]}
+      </div>`
+    ).join('');
+}
+
+
+/* ============================================================
+   DOCUMENT AI
+============================================================ */
+
+const STOP=new Set(
+  'the a an and or but of to in on for with is are was were be been it this that these those as at by from not have has had will would can could should may might their there which also than then into about over more most such other our your its they them he she we you i do does did if so no any all each how what when where who whom why using use used'
+  .split(' ')
+);
+
+const SAMPLE=
+`Operating Systems Project Brief.
+
+Students must submit the design document by Friday.
+
+The final report is due on 28 Nov and should include a performance analysis of the scheduler.
+
+Each team needs to prepare a 10 minute demo for the viva.
+
+Process scheduling decides which process runs on the CPU, and round robin scheduling gives each process a fixed time quantum.
+
+Deadlocks occur when processes wait on each other forever, and the banker's algorithm avoids deadlocks by checking safe states.
+
+Virtual memory lets programs use more memory than physically available through paging.
+
+Please review the marking rubric before starting and complete the peer evaluation form by next Monday.`;
+
+$('#smp').onclick=()=>{
+  $('#dt').value=SAMPLE;
+  an();
+};
+
+const analyseBtn=$('#an');
+
+function showAnalyseError(msg){
+
+  $('#out').innerHTML=
+    `<div
+      class="card"
+      style="margin-top:12px;border-color:var(--hi)"
+    >
+      <b>⚠️ Analyse failed</b>
+      <div class="hint">
+        ${esc(msg)}
+      </div>
+    </div>`;
+}
+
+function an(){
+
+  const tx=
+    $('#dt').value.trim();
+
+  if(!tx){
+
+    showAnalyseError(
+      'Paste some document text first, then click Analyse.'
+    );
+
+    $('#dt').focus();
+
+    return;
+  }
+
+  analyseBtn.disabled=true;
+  analyseBtn.textContent='Analysing…';
+
+  try{
+
+    const sents=
+      (
+        tx.match(
+          /[^.!?\n]+[.!?]?/g
+        )||[]
+      )
+      .map(
+        s=>s.trim()
+      )
+      .filter(
+        s=>s.split(' ').length>3
+      );
+
+    const words=
+      tx
+        .toLowerCase()
+        .match(/[a-z']+/g)||[];
+
+    const wc=words.length;
+
+    const syl=w=>
+      Math.max(
+        1,
+        (
+          w
+            .replace(/e$/,'')
+            .match(/[aeiouy]+/g)||[]
+        ).length
+      );
+
+    const fl=Math.round(
+      206.835-
+      1.015*
+      (wc/Math.max(1,sents.length))-
+      84.6*
+      (
+        words.reduce(
+          (a,w)=>a+syl(w),
+          0
+        )/
+        Math.max(1,wc)
+      )
+    );
+
+    const fr={};
+
+    words.forEach(w=>{
+
+      if(
+        w.length>3&&
+        !STOP.has(w)
+      )
+        fr[w]=(fr[w]||0)+1;
+
+    });
+
+    const kws=
+      Object.entries(fr)
+      .sort((a,b)=>b[1]-a[1])
+      .slice(0,10)
+      .map(a=>a[0]);
+
+    const sc=
+      sents.map(
+        (s,i)=>
+          [
+            i,
+            (
+              s
+                .toLowerCase()
+                .match(/[a-z']+/g)||[]
+            )
+            .reduce(
+              (a,w)=>a+(fr[w]||0),
+              0
+            )/
+            Math.sqrt(s.length)
+          ]
+      );
+
+    const sum=
+      sc
+      .sort((a,b)=>b[1]-a[1])
+      .slice(0,3)
+      .map(a=>a[0])
+      .sort((a,b)=>a-b)
+      .map(i=>sents[i]);
+
+    const acts=
+      sents.filter(
+        s=>
+          /\b(submit|complete|prepare|deliver|due|deadline|must|should|needs? to|write|finish|review|include|register)\b/i
+          .test(s)
+      );
+
+    const cards=[];
+
+    kws.forEach(k=>{
+
+      if(cards.length>=6)return;
+
+      const s=
+        sents.find(
+          s=>
+            new RegExp(
+              '\\b'+k+'\\b',
+              'i'
+            ).test(s)&&
+            s.split(' ').length<35
+        );
+
+      if(
+        s&&
+        !cards.some(c=>c.s===s)
+      ){
+
+        cards.push({
+          s,
+          q:s.replace(
+            new RegExp(
+              '\\b'+k+'\\b',
+              'i'
+            ),
+            '_____'
+          ),
+          a:k
+        });
+      }
+    });
+
+    const diff=
+      fl>60
+        ?'Easy'
+        :fl>40
+          ?'Moderate'
+          :'Dense';
+
+    $('#out').innerHTML=
+      `<div class="stats" style="margin-top:12px">
+
+        ${
+          [
+            [wc,'words'],
+            [sents.length,'sentences'],
+            [Math.max(1,Math.round(wc/200))+' min','reading time'],
+            [diff+' ('+fl+')','readability']
+          ]
+          .map(
+            a=>
+            `<div class="card stat">
+              <b style="font-size:18px">${a[0]}</b>
+              <span>${a[1]}</span>
+            </div>`
+          ).join('')
+        }
+
+      </div>
+
+      <div class="card">
+
+        <h3 style="margin-top:0">
+          Summary
+        </h3>
+
+        ${
+          sum.map(
+            s=>
+            `<p style="margin:4px 0">
+              • ${esc(s)}
+            </p>`
+          ).join('')
+        }
+
+        <h3>Key terms</h3>
+
+        ${
+          kws.map(
+            k=>
+            `<span class="kw">
+              ${esc(k)}
+            </span>`
+          ).join('')
+        }
+
+      </div>
+
+      <div
+        class="card"
+        style="margin-top:12px"
+      >
+
+        <h3 style="margin-top:0">
+          Detected action items
+        </h3>
+
+        ${
+          acts.length
+          ?
+          acts.map(
+            (s,i)=>
+            `<div class="t">
+
+              <div class="m">
+                ${esc(s)}
+              </div>
+
+              <button
+                class="btn s"
+                data-action-index="${i}"
+              >
+                + Task
+              </button>
+
+            </div>`
+          ).join('')
+          :
+          `<div class="hint">
+            No action items found.
+          </div>`
+        }
+
+        ${
+          acts.length
+          ?
+          `<button
+            class="btn"
+            id="all"
+            style="margin-top:8px"
+          >
+            Add all as tasks
+          </button>`
+          :''
+        }
+
+      </div>
+
+      <div
+        class="card"
+        style="margin-top:12px"
+      >
+
+        <h3 style="margin-top:0">
+          Auto study cards
+          <small
+            style="font-weight:400;color:var(--mu)"
+          >
+            (tap to reveal)
+          </small>
+        </h3>
+
+        <div class="grid">
+
+          ${
+            cards.map(
+              c=>
+              `<div
+                class="card fc"
+                data-card-answer="${esc(c.a)}"
+              >
+
+                <small>
+                  Fill the blank
+                </small>
+
+                <p>
+                  ${esc(c.q)}
+                </p>
+
+              </div>`
+            ).join('')
+            ||
+            `<div class="hint">
+              Need longer text.
+            </div>`
+          }
+
+        </div>
+
+      </div>`;
+
+    const add=s=>{
+
+      const title=
+        s.length>90
+          ?s.slice(0,90)+'…'
+          :s;
+
+      const t=parse(title);
+
+      t.subj=
+        t.subj||'Doc';
+
+      S.tasks.push(t);
+    };
+
+    $('#out')
+      .querySelectorAll(
+        '[data-action-index]'
+      )
+      .forEach(
+        b=>{
+          b.onclick=()=>{
+
+            add(
+              acts[
+                +b.dataset.actionIndex
+              ]
+            );
+
+            b.textContent='✓';
+            b.disabled=true;
+
+            render();
+          };
+        }
+      );
+
+    $('#out')
+      .querySelectorAll(
+        '[data-card-answer]'
+      )
+      .forEach(
+        b=>{
+          b.onclick=()=>{
+
+            b.innerHTML+=
+              `<br>
+              <b>
+                → ${esc(
+                  b.dataset.cardAnswer
+                )}
+              </b>`;
+          };
+        }
+      );
+
+    if($('#all')){
+
+      $('#all').onclick=e=>{
+
+        acts.forEach(add);
+
+        e.target.textContent=
+          'Added ✓';
+
+        render();
+
+        setTimeout(
+          ()=>tab('tasks'),
+          500
+        );
+      };
     }
-  } catch(err) {
-    setTeamMessage('Action failed: ' + err.message);
+
+    $('#out').scrollIntoView({
+      behavior:'smooth',
+      block:'start'
+    });
+
+  }catch(err){
+
+    console.error(
+      'Document analysis error:',
+      err
+    );
+
+    showAnalyseError(
+      err&&err.message
+        ?err.message
+        :'Something went wrong while analysing the document.'
+    );
+
+  }finally{
+
+    analyseBtn.disabled=false;
+    analyseBtn.textContent='Analyse';
+
+  }
+}
+
+
+/* ============================================================
+   CALENDAR
+============================================================ */
+
+let cm=new Date();
+
+cm.setDate(1);
+
+function cal(){
+
+  const y=cm.getFullYear();
+  const m=cm.getMonth();
+
+  $('#mt').textContent=
+    cm.toLocaleDateString(
+      undefined,
+      {
+        month:'long',
+        year:'numeric'
+      }
+    );
+
+  let h=
+    DAYS
+      .map(
+        d=>
+          `<div class="h">${d}</div>`
+      ).join('');
+
+  for(
+    let i=0;
+    i<cm.getDay();
+    i++
+  )
+    h+='<div></div>';
+
+  const n=
+    new Date(
+      y,
+      m+1,
+      0
+    ).getDate();
+
+  const tk=
+    new Date().toDateString();
+
+  for(let d=1;d<=n;d++){
+
+    const dt=
+      new Date(y,m,d);
+
+    const c=
+      S.tasks.filter(
+        t=>
+          !t.done&&
+          t.due&&
+          new Date(t.due)
+            .toDateString()===
+          dt.toDateString()
+      ).length;
+
+    h+=
+      `<div
+        class="dy ${
+          dt.toDateString()===tk?'td':''
+        }"
+        data-d="${+dt}"
+      >
+        ${d}
+        ${
+          c
+          ?
+          `<i>
+            ${'●'.repeat(Math.min(c,3))}
+          </i>`
+          :''
+        }
+      </div>`;
+  }
+
+  $('#cg').innerHTML=h;
+}
+
+$('#pm').onclick=()=>{
+  cm.setMonth(
+    cm.getMonth()-1
+  );
+  cal();
+};
+
+$('#nm').onclick=()=>{
+  cm.setMonth(
+    cm.getMonth()+1
+  );
+  cal();
+};
+
+$('#cg').onclick=e=>{
+
+  const d=
+    e.target.closest('.dy');
+
+  if(!d)return;
+
+  const dt=
+    new Date(
+      +d.dataset.d
+    ).toDateString();
+
+  const L=
+    S.tasks.filter(
+      t=>
+        t.due&&
+        new Date(t.due)
+          .toDateString()===dt
+    );
+
+  $('#cd').innerHTML=
+    `<b>${dt}</b>`+
+
+    (
+      L.length
+      ?
+      L.map(
+        t=>
+        `<div
+          class="t ${t.done?'d':''}"
+        >
+
+          <div class="m">
+
+            <div class="ti">
+              ${esc(t.title)}
+            </div>
+
+            <span class="chip p${t.pri}">
+              ${['','low','med','high'][t.pri]}
+            </span>
+
+            ${
+              t.subj
+              ?
+              `<span class="chip">
+                #${esc(t.subj)}
+              </span>`
+              :''
+            }
+
+            <small>
+              ${when(t)}
+            </small>
+
+          </div>
+
+        </div>`
+      ).join('')
+      :
+      `<div class="hint">
+        Nothing due.
+      </div>`
+    );
+};
+
+
+/* ============================================================
+   GEMINI AI
+============================================================ */
+
+let AI=null;
+
+const ask=async(p,o)=>{
+  if(!AI)
+    throw new Error('AI unavailable');
+
+  const r=
+    await AI(p,o);
+
+  return r.text;
+};
+
+(async()=>{
+
+  try{
+    AI=await claude.use('sample');
+  }catch(e){
+    AI=null;
+  }
+
+  if(!AI){
+
+    document
+      .querySelectorAll('#aisum')
+      .forEach(
+        b=>b.classList.add('hide')
+      );
+
+    document.head.insertAdjacentHTML(
+      'beforeend',
+      '<style>.ai-only{display:none}</style>'
+    );
+  }
+
+})();
+
+
+/* ============================================================
+   AI TASK SPLITTING
+============================================================ */
+
+async function split(t,btn){
+
+  if(!AI)return;
+
+  btn.textContent='…';
+
+  try{
+
+    const r=
+      await AI.json(
+        `Break this student task into 3-6 concrete subtasks.
+Return ONLY JSON:
+[{"title":string,"minutes":number}].
+
+Task: "${t.title}"
+Subject: ${t.subj||'general'}
+Total estimated time: ${t.est} minutes.`
+      );
+
+    (
+      Array.isArray(r)?r:[]
+    )
+    .slice(0,6)
+    .forEach(x=>{
+
+      const n=
+        parse(
+          x.title+
+          ' ~'+
+          (+x.minutes||20)+
+          'm'
+        );
+
+      n.subj=t.subj;
+      n.due=t.due;
+
+      S.tasks.push(n);
+    });
+
+    render();
+
+  }catch(e){
+
+    btn.textContent='✨ Split';
+
+  }
+}
+
+
+/* ============================================================
+   AI DOCUMENT SUMMARY
+============================================================ */
+
+const dtx=()=>
+  $('#dt')
+    .value
+    .trim()
+    .slice(0,12000);
+
+$('#aisum').onclick=async()=>{
+
+  if(!dtx())return;
+
+  $('#aib')
+    .classList
+    .remove('hide');
+
+  $('#aio').textContent=
+    'Thinking…';
+
+  try{
+
+    await AI(
+      `Summarise this document for a student in under 120 words,
+then list key deadlines and 3 likely exam questions.
+
+DOCUMENT:
+
+${dtx()}`,
+      {
+        onText:r=>
+          $('#aio').textContent=r.text
+      }
+    );
+
+  }catch(e){
+
+    $('#aio').textContent=
+      'AI unavailable ('+
+      (e.code||'error')+
+      ').';
+
   }
 };
+
+
+$('#aia').onclick=async()=>{
+
+  const q=
+    $('#aiq').value.trim();
+
+  if(!q||!dtx())return;
+
+  $('#aio').textContent+=
+    '\n\nQ: '+q+'\nA: …';
+
+  try{
+
+    const a=
+      await ask(
+        `Answer using only this document.
+If not covered, say so.
+Be concise.
+
+DOCUMENT:
+${dtx()}
+
+QUESTION:
+${q}`
+      );
+
+    $('#aio').textContent=
+      $('#aio')
+        .textContent
+        .replace(/…$/,'')+
+      a;
+
+    $('#aiq').value='';
+
+  }catch(e){
+
+    $('#aio').textContent=
+      $('#aio')
+        .textContent
+        .replace(
+          /…$/,
+          '(failed)'
+        );
+  }
+};
+
+
+/* ============================================================
+   PDF UPLOAD
+============================================================ */
+
+const lj=u=>
+  new Promise(
+    (resolve,reject)=>{
+
+      const x=
+        document.createElement('script');
+
+      x.src=u;
+
+      x.onload=resolve;
+      x.onerror=reject;
+
+      document.head.appendChild(x);
+    }
+  );
+
+$('#pf').onchange=async e=>{
+
+  const f=e.target.files[0];
+
+  if(!f)return;
+
+  $('#dt').value=
+    'Reading PDF…';
+
+  try{
+
+    const B=
+      'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
+
+    if(!window.pdfjsLib){
+
+      await lj(
+        B+'pdf.min.js'
+      );
+
+      await lj(
+        B+'pdf.worker.min.js'
+      );
+
+      pdfjsLib
+        .GlobalWorkerOptions
+        .workerSrc=
+        B+'pdf.worker.min.js';
+    }
+
+    const pdf=
+      await pdfjsLib
+        .getDocument({
+          data:await f.arrayBuffer()
+        })
+        .promise;
+
+    let t='';
+
+    for(
+      let i=1;
+      i<=Math.min(pdf.numPages,40);
+      i++
+    ){
+
+      const page=
+        await pdf.getPage(i);
+
+      const c=
+        await page.getTextContent();
+
+      t+=
+        c.items
+          .map(x=>x.str)
+          .join(' ')+'\n';
+    }
+
+    if(t.trim().length<20)
+      throw new Error();
+
+    $('#dt').value=
+      t.trim();
+
+    an();
+
+  }catch(err){
+
+    $('#dt').value='';
+
+    alert(
+      'Could not read this PDF. It may be a scanned PDF. Try pasting the text instead.'
+    );
+
+  }
+
+  e.target.value='';
+};
+
+
+/* ============================================================
+   TEAM COLLABORATION
+============================================================ */
+
+let teamState=null;
+
+try{
+
+  teamState=
+    JSON.parse(
+      localStorage.getItem(
+        'ssa_team'
+      )||'null'
+    );
+
+}catch(e){
+
+  teamState=null;
+}
+
+let teamMemberId=
+  localStorage.getItem(
+    'ssa_team_member_id'
+  );
+
+let teamMemberPoll=null;
+
+if(!teamMemberId){
+
+  teamMemberId=
+    'm_'+
+    Math.random()
+      .toString(36)
+      .slice(2)+
+    Date.now()
+      .toString(36);
+
+  localStorage.setItem(
+    'ssa_team_member_id',
+    teamMemberId
+  );
+}
+
+
+const teamApi=
+  async(url,options={})=>{
+
+    const res=
+      await fetch(
+        url,
+        {
+          ...options,
+          headers:{
+            'Content-Type':
+              'application/json',
+            ...(options.headers||{})
+          }
+        }
+      );
+
+    let data={};
+
+    try{
+      data=await res.json();
+    }catch(e){}
+
+    if(!res.ok)
+      throw new Error(
+        data.error||
+        'Request failed ('+
+        res.status+
+        ')'
+      );
+
+    return data;
+  };
+
+
+const saveTeamState=()=>{
+
+  try{
+
+    if(teamState)
+      localStorage.setItem(
+        'ssa_team',
+        JSON.stringify(teamState)
+      );
+
+    else
+      localStorage.removeItem(
+        'ssa_team'
+      );
+
+  }catch(e){}
+};
+
+
+const showTeamPanel=name=>{
+
+  [
+    'createTeamPanel',
+    'joinTeamPanel'
+  ]
+  .forEach(
+    id=>
+      $('#'+id)
+        .classList
+        .add('hide')
+  );
+
+  if(name)
+    $('#'+name)
+      .classList
+      .remove('hide');
+};
+
+
+const setTeamMessage=msg=>{
+  $('#tmsg').textContent=msg;
+};
+
+
+const teamEsc=value=>
+  String(value??'')
+    .replace(
+      /[&<>"']/g,
+      c=>({
+        '&':'&amp;',
+        '<':'&lt;',
+        '>':'&gt;',
+        '"':'&quot;',
+        "'":'&#39;'
+      }[c])
+    );
+
+
+async function loadTeamTasks(){
+
+  if(!teamState)return;
+
+  try{
+
+    const data=
+      await teamApi(
+        '/api/team/'+
+        encodeURIComponent(
+          teamState.code
+        )+
+        '/tasks'
+      );
+
+    const tasks=
+      data.tasks||[];
+
+    $('#teamMemberCount')
+      .textContent=
+      data.member_count??1;
+
+    $('#tl')
+      .classList
+      .remove('hide');
+
+    $('#tl').innerHTML=
+      tasks.length
+      ?
+      tasks.map(
+        t=>
+        `<div
+          class="t ${t.done?'d':''}"
+        >
+
+          <input
+            type="checkbox"
+            ${t.done?'checked':''}
+            data-team-check="${teamEsc(t.id)}"
+          >
+
+          <div class="m">
+
+            <div class="ti">
+              ${teamEsc(
+                t.title||
+                'Untitled task'
+              )}
+            </div>
+
+            <span class="chip">
+              👤
+              ${teamEsc(
+                t.by||
+                'Team member'
+              )}
+            </span>
+
+          </div>
+
+          <button
+            class="btn g s"
+            data-team-delete="${teamEsc(t.id)}"
+          >
+            ✕
+          </button>
+
+        </div>`
+      ).join('')
+
+      :
+
+      `<div class="hint">
+        No shared tasks yet.
+        Add the first one above.
+      </div>`;
+
+  }catch(e){
+
+    setTeamMessage(
+      'Could not load team tasks: '+
+      e.message
+    );
+  }
+}
+
+
+function renderTeamConnection(){
+
+  const connected=!!teamState;
+
+  $('#teamHome')
+    .classList
+    .toggle(
+      'hide',
+      connected
+    );
+
+  $('#connectedTeam')
+    .classList
+    .toggle(
+      'hide',
+      !connected
+    );
+
+  $('#tl')
+    .classList
+    .toggle(
+      'hide',
+      !connected
+    );
+
+  if(!connected){
+
+    if(teamMemberPoll){
+
+      clearInterval(
+        teamMemberPoll
+      );
+
+      teamMemberPoll=null;
+    }
+
+    showTeamPanel(null);
+
+    setTeamMessage(
+      'Create a team or join an existing team using a code.'
+    );
+
+    return;
+  }
+
+  $('#connectedTeamName')
+    .textContent=
+    teamState.name;
+
+  $('#connectedTeamCode')
+    .textContent=
+    teamState.code;
+
+  $('#teamMemberCount')
+    .textContent=
+    teamState.member_count??1;
+
+  setTeamMessage(
+    'You are connected. Anyone who joins with this code sees the same team tasks.'
+  );
+
+  loadTeamTasks();
+
+  if(teamMemberPoll)
+    clearInterval(
+      teamMemberPoll
+    );
+
+  teamMemberPoll=
+    setInterval(
+      ()=>{
+        if(
+          teamState&&
+          !document.hidden
+        )
+          loadTeamTasks();
+      },
+      3000
+    );
+}
+
+
+document.addEventListener(
+  'visibilitychange',
+  ()=>{
+    if(
+      !document.hidden&&
+      teamState
+    )
+      loadTeamTasks();
+  }
+);
+
+
+/* CREATE TEAM */
+
+$('#createTeamBtn').onclick=
+  ()=>showTeamPanel(
+    'createTeamPanel'
+  );
+
+
+/* JOIN TEAM */
+
+$('#joinTeamBtn').onclick=
+  ()=>showTeamPanel(
+    'joinTeamPanel'
+  );
+
+
+$('#cancelCreateTeam').onclick=
+  ()=>showTeamPanel(null);
+
+$('#cancelJoinTeam').onclick=
+  ()=>showTeamPanel(null);
+
+
+$('#doCreateTeam').onclick=
+  async()=>{
+
+    const name=
+      $('#teamName')
+        .value
+        .trim();
+
+    if(!name){
+
+      alert(
+        'Please enter a team name.'
+      );
+
+      return;
+    }
+
+    const btn=
+      $('#doCreateTeam');
+
+    btn.disabled=true;
+
+    try{
+
+      const data=
+        await teamApi(
+          '/api/team/create',
+          {
+            method:'POST',
+            body:JSON.stringify({
+              name,
+              member_id:
+                teamMemberId
+            })
+          }
+        );
+
+      teamState=
+        data.team;
+
+      teamState.member_count=
+        data.member_count||
+        teamState.member_count||
+        1;
+
+      saveTeamState();
+
+      $('#teamName').value='';
+
+      renderTeamConnection();
+
+      alert(
+        'Team created! Share this code with your teammates: '+
+        teamState.code
+      );
+
+    }catch(e){
+
+      alert(
+        'Could not create team: '+
+        e.message
+      );
+
+    }finally{
+
+      btn.disabled=false;
+    }
+  };
+
+
+/* JOIN TEAM */
+
+$('#doJoinTeam').onclick=
+  async()=>{
+
+    const code=
+      $('#teamCodeInput')
+        .value
+        .trim()
+        .toUpperCase();
+
+    if(!/^[A-Z0-9]{6}$/.test(code)){
+
+      alert(
+        'Enter the 6-character team code.'
+      );
+
+      return;
+    }
+
+    const btn=
+      $('#doJoinTeam');
+
+    btn.disabled=true;
+
+    try{
+
+      const data=
+        await teamApi(
+          '/api/team/join',
+          {
+            method:'POST',
+            body:JSON.stringify({
+              code,
+              member_id:
+                teamMemberId
+            })
+          }
+        );
+
+      teamState=
+        data.team;
+
+      teamState.member_count=
+        data.member_count||
+        teamState.member_count||
+        1;
+
+      saveTeamState();
+
+      $('#teamCodeInput').value='';
+
+      renderTeamConnection();
+
+    }catch(e){
+
+      alert(
+        'Could not join team: '+
+        e.message
+      );
+
+    }finally{
+
+      btn.disabled=false;
+    }
+  };
+
+
+/* COPY TEAM CODE */
+
+$('#copyTeamCode').onclick=
+  async()=>{
+
+    if(!teamState)return;
+
+    try{
+
+      await navigator.clipboard.writeText(
+        teamState.code
+      );
+
+      setTeamMessage(
+        'Team code copied: '+
+        teamState.code
+      );
+
+    }catch(e){
+
+      alert(
+        'Your team code is: '+
+        teamState.code
+      );
+    }
+  };
+
+
+/* LEAVE TEAM */
+
+$('#leaveTeam').onclick=
+  async()=>{
+
+    if(
+      !teamState||
+      !confirm(
+        'Leave this team? Your member count will decrease by 1.'
+      )
+    )
+      return;
+
+    const code=
+      teamState.code;
+
+    const btn=
+      $('#leaveTeam');
+
+    btn.disabled=true;
+
+    try{
+
+      const data=
+        await teamApi(
+          '/api/team/'+
+          encodeURIComponent(code)+
+          '/leave',
+          {
+            method:'POST',
+            body:JSON.stringify({
+              member_id:
+                teamMemberId
+            })
+          }
+        );
+
+      teamState=null;
+
+      saveTeamState();
+
+      renderTeamConnection();
+
+      setTeamMessage(
+        'You left the team. Members remaining: '+
+        (data.member_count??0)
+      );
+
+    }catch(e){
+
+      alert(
+        'Could not leave team: '+
+        e.message
+      );
+
+    }finally{
+
+      btn.disabled=false;
+    }
+  };
+
+
+/* ADD SHARED TEAM TASK */
+
+$('#tq').onkeydown=
+  async e=>{
+
+    if(e.key!=='Enter')
+      return;
+
+    const title=
+      e.target.value.trim();
+
+    if(
+      !title||
+      !teamState
+    )
+      return;
+
+    try{
+
+      await teamApi(
+        '/api/team/'+
+        encodeURIComponent(
+          teamState.code
+        )+
+        '/tasks',
+        {
+          method:'POST',
+          body:JSON.stringify({
+            title,
+            by:'Team member',
+            done:false
+          })
+        }
+      );
+
+      e.target.value='';
+
+      await loadTeamTasks();
+
+    }catch(err){
+
+      setTeamMessage(
+        'Could not add task: '+
+        err.message
+      );
+    }
+  };
+
+
+/* TEAM TASK ACTIONS */
+
+$('#tl').onclick=
+  async e=>{
+
+    if(!teamState)return;
+
+    const checkId=
+      e.target.dataset.teamCheck;
+
+    const deleteId=
+      e.target.dataset.teamDelete;
+
+    try{
+
+      if(checkId){
+
+        await teamApi(
+          '/api/team/'+
+          encodeURIComponent(
+            teamState.code
+          )+
+          '/tasks/'+
+          encodeURIComponent(
+            checkId
+          ),
+          {
+            method:'PATCH',
+            body:JSON.stringify({
+              done:e.target.checked
+            })
+          }
+        );
+
+        await loadTeamTasks();
+      }
+
+      if(deleteId){
+
+        await teamApi(
+          '/api/team/'+
+          encodeURIComponent(
+            teamState.code
+          )+
+          '/tasks/'+
+          encodeURIComponent(
+            deleteId
+          ),
+          {
+            method:'DELETE'
+          }
+        );
+
+        await loadTeamTasks();
+      }
+
+    }catch(err){
+
+      setTeamMessage(
+        'Action failed: '+
+        err.message
+      );
+    }
+  };
+
 
 renderTeamConnection();
 
-/* Refresh shared tasks so changes from teammates appear on all devices. */
-setInterval(() => { if (teamState && !document.hidden) loadTeamTasks(); }, 2000);
 
-render();paint();cal();
-</script></body></html>
+/* ============================================================
+   START APPLICATION
+============================================================ */
+
+setInterval(
+  ()=>{
+    if(
+      teamState&&
+      !document.hidden
+    )
+      loadTeamTasks();
+  },
+  2000
+);
+
+render();
+paint();
+cal();
+
+</script>
+
+</body>
+</html>
